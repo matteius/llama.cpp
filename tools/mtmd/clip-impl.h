@@ -64,6 +64,7 @@
 #define KEY_PROJ_SPATIAL_OFFSETS    "clip.vision.projector.spatial_offsets"
 #define KEY_SPATIAL_MERGE_SIZE      "clip.vision.spatial_merge_size"
 #define KEY_SWIGLU_CLAMP            "clip.vision.swiglu_clamp"
+#define KEY_VISION_SWIGLU_LIMIT     "clip.vision.swiglu_limit"
 
 #define KEY_MM_PATCH_MERGE_TYPE    "clip.vision.mm_patch_merge_type"
 #define KEY_IMAGE_GRID_PINPOINTS   "clip.vision.image_grid_pinpoints"
@@ -575,6 +576,10 @@ static std::map<projector_type, std::string> PROJECTOR_TYPE_NAMES = {
 };
 
 static projector_type clip_projector_type_from_string(const std::string & str) {
+    if (str == "glm5next") {
+        return PROJECTOR_TYPE_GLM5V;
+    }
+
     for (const auto & pair : PROJECTOR_TYPE_NAMES) {
         if (pair.second == str) {
             return pair.first;

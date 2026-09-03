@@ -1769,13 +1769,19 @@ struct clip_model_loader {
                         hparams.image_resize_algo = RESIZE_ALGO_BICUBIC;
                         get_u32(KEY_SPATIAL_MERGE_SIZE, hparams.n_merge, false);
                         float swiglu_clamp = 0.0f;
-                        get_f32(KEY_SWIGLU_CLAMP, swiglu_clamp, true);
+                        get_f32(KEY_SWIGLU_CLAMP, swiglu_clamp, false);
+                        if (swiglu_clamp <= 0.0f) {
+                            get_f32(KEY_VISION_SWIGLU_LIMIT, swiglu_clamp, true);
+                        }
                         if (swiglu_clamp > 0.0f) {
                             hparams.swiglu_clamp_gate = { -INFINITY,     swiglu_clamp };
                             hparams.swiglu_clamp_up   = { -swiglu_clamp, swiglu_clamp };
                         }
-                        get_u32(KEY_IMAGE_MIN_PIXELS, hparams.image_min_pixels);
-                        get_u32(KEY_IMAGE_MAX_PIXELS, hparams.image_max_pixels);
+                        get_u32(KEY_IMAGE_MIN_PIXELS, hparams.image_min_pixels, false);
+                        get_u32(KEY_IMAGE_MAX_PIXELS, hparams.image_max_pixels, false);
+                        if (hparams.image_min_pixels <= 0 || hparams.image_max_pixels <= 0) {
+                            hparams.set_limit_image_tokens(16, 8000);
+                        }
                         hparams.set_warmup_n_tokens(46*46); // avoid OOM on warmup
                     } break;
                 case PROJECTOR_TYPE_LLAMA4:
